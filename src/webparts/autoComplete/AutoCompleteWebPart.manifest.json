@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../node_modules/@microsoft/sp-module-interfaces/lib/manifestSchemas/jsonSchemas/clientSideComponentManifestSchema.json",
+
+  "id": "b8fb572c-4a34-410d-9b34-2ff3c62f6296",
+  "alias": "AutoCompleteWebPart",
+  "componentType": "WebPart",
+  "version": "*", // The "*" signifies that the version should be taken from the package.json
+  "manifestVersion": 2,
+
+  /**
+   * This property should only be set to true if it is certain that the webpart does not
+   *  allow arbitrary scripts to be called
+   */
+  "safeWithCustomScriptDisabled": false,
+
+  "preconfiguredEntries": [{
+    "groupId": "b8fb572c-4a34-410d-9b34-2ff3c62f6296",
+    "group": { "default": "Under Development" },
+    "title": { "default": "AutoComplete" },
+    "description": { "default": "AutoComplete description" },
+    "officeFabricIconFontName": "Page",
+    "properties": {
+      "description": "AutoComplete"
+    }
+  }]
+}

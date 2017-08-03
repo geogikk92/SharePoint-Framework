@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "entry": "./lib/webparts/autoComplete/AutoCompleteWebPart.js",
+      "manifest": "./src/webparts/autoComplete/AutoCompleteWebPart.manifest.json",
+      "outputPath": "./dist/auto-complete.bundle.js"
+    }
+  ],
+  "externals": {},
+  "localizedResources": {
+    "autoCompleteStrings": "webparts/autoComplete/loc/{locale}.js"
+  }
+}

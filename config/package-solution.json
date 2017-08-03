@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "name": "sp-fx-intro-wp-client-side-solution",
+    "id": "ee96bc38-6108-4076-a0c6-854894245de3",
+    "version": "1.0.0.0"
+  },
+  "paths": {
+    "zippedPackage": "solution/sp-fx-intro-wp.sppkg"
+  }
+}
