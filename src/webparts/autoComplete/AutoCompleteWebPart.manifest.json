@@ -20,7 +20,7 @@
     "description": { "default": "AutoComplete description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "AutoComplete"
+      "EmployeesListName": "Employees"
     }
   }]
 }

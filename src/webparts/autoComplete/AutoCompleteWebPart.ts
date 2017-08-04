@@ -4,7 +4,8 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneDropdown
 } from '@microsoft/sp-webpart-base';
 
 import {
@@ -16,6 +17,7 @@ import AutoComplete from './components/AutoComplete';
 import { IAutoCompleteProps } from './components/IAutoCompleteProps';
 import { IAutoCompleteWebPartProps } from './IAutoCompleteWebPartProps';
 import { Web } from "sp-pnp-js";
+import { List, ListEnsureResult } from "sp-pnp-js";
 
 export default class AutoCompleteWebPart extends BaseClientSideWebPart<IAutoCompleteWebPartProps> {
 
@@ -24,52 +26,40 @@ export default class AutoCompleteWebPart extends BaseClientSideWebPart<IAutoComp
     const element: React.ReactElement<IAutoCompleteProps> = React.createElement(
       AutoComplete,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        EmpListTitleProperty: this.properties.EmpListTitleProperty
       }
     );
 
-    this.getCurrEmpHolidays("Employees");
-
+    this.getCurrEmpData();
     ReactDom.render(element, this.domElement);
   }
 
-  private getCurrEmpHolidays(listName: string): void {
+  private getCurrEmpData(): void {
 
     let web = new Web(this.context.pageContext.site.absoluteUrl);
-    let html: string = '';
-    let filterTxt = `Title eq  '${this.getCurrentUserName()}'`;
+    let listName: string = this.properties.EmpListTitleProperty;
+    let filter: string = `Title eq '${this.getCurrentUserNickName()}'`;
+    let selectColumns: string = 'LirexEmplFullName, LirexEmplDays, LirexEmplPosition, LirexEmplDepartment, LirexEmplDirection';
+    let generatedHtml: string = '';
 
-    // use odata operators for more efficient queries
-    web.lists.getByTitle(listName).items.filter(filterTxt).top(1).get().then((item => {
+    web.lists.getByTitle(listName).items.select(selectColumns).filter(filter).top(1).get().then((items: any[]) => {
 
-      html = `<ul>
-                    <li>
-                        <span class="ms-font-l">${item.Title}</span> 
-                         <span class="ms-font-l">${item.LirexEmplFullName}</span>
-                    </li>
-                </ul>`
-
-
-      // Use for multiple items
-      // web.lists.getByTitle(listName).items.filter(filterTxt).top(1).get().then((items: any[]) => {
-
-      //   items.forEach(item => {
-      //     html += `<ul>
-      //                 <li>
-      //                     <span class="ms-font-l">${item.Title}</span> 
-      //                      <span class="ms-font-l">${item.LirexEmplFullName}</span>
-      //                 </li>
-      //             </ul>`
-      //   });
-
-      this.domElement.querySelector('#lists').innerHTML = html;
+      items.forEach(item => {
+        generatedHtml += `<td>${item.LirexEmplFullName}</td>
+                          <td>${item.LirexEmplDays}</td>
+                          <td>${item.LirexEmplPosition}</td>
+                          <td>${item.LirexEmplDepartment}</td>
+                          <td>${item.LirexEmplDirection}</td>`;
+      });
+      this.domElement.querySelector('#trUserInfo').innerHTML = generatedHtml;
     });
   }
 
-
-  private getCurrentUserName(): string {
-    let formattedUserName: string = this.context.pageContext.user.loginName
+  private getCurrentUserNickName(): string {
+    let formattedUserName: string = this.context.pageContext.user.loginName;
     formattedUserName = formattedUserName.substring(formattedUserName.lastIndexOf("|") + 1, formattedUserName.lastIndexOf("@"));
+
     return formattedUserName;
   }
 
@@ -84,8 +74,16 @@ export default class AutoCompleteWebPart extends BaseClientSideWebPart<IAutoComp
             {
               groupName: strings.BasicGroupName,
               groupFields: [
+                PropertyPaneTextField('EmpListTitleProperty', {
+                  label: "Име на списък служители",
+                  value: "Служители",
+                  placeholder: "Въведете име на списък със служители",
+                  onGetErrorMessage: this.simpleTextBoxValidationMethod
+                }),
                 PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                  label: "Заглавен текст на уеб парта(Описание)",
+                  multiline: true,
+                  resizable: true
                 })
               ]
             }
@@ -94,6 +92,12 @@ export default class AutoCompleteWebPart extends BaseClientSideWebPart<IAutoComp
       ]
     };
   }
+
+  private simpleTextBoxValidationMethod(value: string): string {
+    if (value.length < 2) {
+      return "Моля, въведете повече от два символа!";
+    } else {
+      return "";
+    }
+  }
 }
-
-
